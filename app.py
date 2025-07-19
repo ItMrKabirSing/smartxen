@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, render_template
 import re
 import random
 import requests
+import pycountry
 
 app = Flask(__name__)
 
@@ -34,8 +35,7 @@ def calculate_luhn_check_digit(card_number):
     return (10 - (checksum % 10)) % 10
 
 def generate_credit_card(bin, amount, month=None, year=None, cvv=None):
-    cards = [];
-
+    cards = []
     is_amex = is_amex_bin(bin)
     target_length = 14 if is_amex else 15
     cvv_length = 4 if is_amex else 3
@@ -74,6 +74,18 @@ def generate_custom_cards(bin, amount, month=None, year=None, cvv=None):
                 break
     return cards
 
+def get_flag(country_code, client=None, message=None):
+    try:
+        country = pycountry.countries.get(alpha_2=country_code)
+        if not country:
+            raise ValueError("Invalid country code")
+        country_name = country.name
+        flag_emoji = chr(0x1F1E6 + ord(country_code[0]) - ord('A')) + chr(0x1F1E6 + ord(country_code[1]) - ord('A'))
+        return country_name, flag_emoji
+    except Exception as e:
+        error_msg = f"Error in get_flag: {str(e)}"
+        return "Unknown Country", "🇺🇳"
+
 def get_bin_info(bin):
     clean_bin = bin.replace('x', '').replace('X', '')[:6]
     try:
@@ -85,14 +97,14 @@ def get_bin_info(bin):
             data = response.json()
             if data.get('Status') == 'SUCCESS':
                 bank = data.get('Issuer', 'Unknown Bank')
-                country = data.get('Country', {}).get('Name', 'Unknown Country')
-                country_flag = '🇺🇳' if country == 'Unknown Country' else '🇺🇸' if country == 'United States' else data.get('Country', {}).get('A2', 'UN').lower()
+                country_code = data.get('Country', {}).get('A2', 'UN')
+                country_name, flag_emoji = get_flag(country_code)
                 scheme = data.get('Scheme', 'Unknown Scheme')
                 card_type = data.get('Type', 'Unknown Type')
                 bin_info = f"{scheme} - {card_type}"
                 return {
                     'Bank': bank,
-                    'Country': f"{country} {country_flag}",
+                    'Country': f"{country_name} {flag_emoji}",
                     'BIN Info': bin_info
                 }
         return {
