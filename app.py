@@ -34,7 +34,8 @@ def calculate_luhn_check_digit(card_number):
     return (10 - (checksum % 10)) % 10
 
 def generate_credit_card(bin, amount, month=None, year=None, cvv=None):
-    cards = []
+    cards = [];
+
     is_amex = is_amex_bin(bin)
     target_length = 14 if is_amex else 15
     cvv_length = 4 if is_amex else 3
@@ -60,7 +61,7 @@ def generate_custom_cards(bin, amount, month=None, year=None, cvv=None):
     cvv_length = 4 if is_amex else 3
     for _ in range(amount):
         while True:
-            card_body = bin.replace('x', '').replace('X', '')
+            card_body = ''.join([str(random.randint(0, 9)) if char.lower() == 'x' else char for char in bin])
             remaining_digits = target_length - len(card_body)
             card_body += ''.join([str(random.randint(0, 9)) for _ in range(remaining_digits)])
             check_digit = calculate_luhn_check_digit(card_body)
@@ -113,7 +114,7 @@ def parse_input(user_input):
     cvv = None
     amount = 10
     match = re.match(
-        r"^([0-9xX]{6,16})"
+        r"^(\d{0,12}[xX]{0,10}\d{0,12}|\d{6,15})"
         r"(?:[|:/](\d{2}))?"
         r"(?:[|:/](\d{2,4}))?"
         r"(?:[|:/]([0-9]{3,4}|xxx|rnd)?)?"
@@ -123,15 +124,11 @@ def parse_input(user_input):
     if match:
         bin, month, year, cvv, amount = match.groups()
         if bin:
-            has_x = 'x' in bin.lower()
-            bin_length = len(bin)
-            clean_length = len(bin.replace('x','').replace('X',''))
-            if clean_length < 6:
+            clean_bin = bin.replace('x', '').replace('X', '')
+            bin_length = len(clean_bin)
+            if bin_length < 6 or bin_length > 15:
                 return None, None, None, None, None
-            if has_x and bin_length > 16:
-                return None, None, None, None, None
-            if not has_x and (bin_length < 6 or bin_length > 15):
-                return None, None, None, None, None
+            bin = clean_bin
         if cvv and cvv.lower() not in ['xxx', 'rnd']:
             is_amex = is_amex_bin(bin) if bin else False
             expected_cvv_length = 4 if is_amex else 3
