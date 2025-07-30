@@ -3,391 +3,413 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Dev's CC XEN API</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <meta name="description" content="Smart CC XEN Web - Explore a sleek, white-themed dashboard featuring Dev @ISmartCoder and futuristic tools.">
+    <meta property="og:title" content="Smart CC XEN Web Dashboard">
+    <meta property="og:description" content="Discover Dev @ISmartCoder and futuristic features with a stunning white interface.">
+    <title>Smart CC XEN Web - Cosmic Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
     <style>
         body {
-            background: linear-gradient(-45deg, #f8f9fa, #e9ecef, #f1f3f5, #ffffff);
-            background-size: 400% 400%;
-            animation: gradient 15s ease infinite;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(180deg, #f0f4f8 0%, #ffffff 100%);
             color: #1a1a1a;
-            min-height: 100vh;
-            margin: 0;
-        }
-        @keyframes gradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        .navbar {
-            background: #ffffff;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            padding: 1rem 0;
-            border-radius: 0 0 16px 16px;
-        }
-        .navbar-brand img {
-            height: 32px;
-            margin-right: 10px;
-            border-radius: 6px;
-        }
-        .navbar-brand {
-            font-weight: 600;
-            font-size: 1.4rem;
-            color: #1a1a1a !important;
-        }
-        .nav-link {
-            font-weight: 500;
-            color: #1a1a1a !important;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            transition: color 0.3s, background 0.3s;
-        }
-        .nav-link:hover {
-            color: #00C4B4 !important;
-            background: rgba(0, 196, 180, 0.1);
+            overflow-x: hidden;
+            position: relative;
         }
         .hero {
-            background: #ffffff;
-            padding: 4rem 0;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><defs><filter id="glow"><feGaussianBlur stdDeviation="5" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><rect width="100%" height="100%" fill="none" filter="glow"/></svg>'), linear-gradient(135deg, #ffffff, #e6f0fa);
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+            padding: 150px 0;
             text-align: center;
-            border-radius: 16px;
-            margin: 1.5rem 0;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
         }
-        .hero h1 {
-            font-size: 2.8rem;
-            font-weight: 600;
+        h1, h2 {
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 10px rgba(0, 170, 255, 0.3);
+        }
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+        .nav-link {
+            transition: color 0.3s, transform 0.3s, text-shadow 0.3s;
+        }
+        .nav-link:hover {
+            color: #00aaff;
+            transform: scale(1.1);
+            text-shadow: 0 0 5px rgba(0, 170, 255, 0.5);
+        }
+        .input-panel {
+            background: rgba(255, 255, 255, 0.98);
+            border: 2px solid #00aaff;
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 0 30px rgba(0, 170, 255, 0.4);
+            transition: transform 0.4s ease-in-out, box-shadow 0.4s ease-in-out;
+        }
+        .input-panel:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 0 40px rgba(0, 170, 255, 0.6);
+        }
+        .response-card {
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid #00aaff;
+            border-radius: 20px;
+            padding: 30px;
+            animation: fadeIn 0.6s ease-in-out;
+            box-shadow: 0 0 20px rgba(0, 170, 255, 0.3);
+            overflow: auto;
+        }
+        .loader {
+            border: 5px solid #1a1a1a;
+            border-top: 5px solid #00aaff;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            animation: spin 1.2s linear infinite;
+            display: none;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(25px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .social-icons a {
+            font-size: 2.2rem;
+            margin: 0 18px;
+            transition: transform 0.4s, color 0.4s, box-shadow 0.4s;
+        }
+        .social-icons a:hover {
+            transform: scale(1.3);
+            box-shadow: 0 0 10px rgba(0, 170, 255, 0.7);
+        }
+        #canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            opacity: 0.25;
+        }
+        pre {
+            background: #f0f4f8 !important;
             color: #1a1a1a;
-            text-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+            padding: 18px;
+            border-radius: 12px;
+            font-family: 'Courier New', Courier, monospace;
+            white-space: pre-wrap;
+            border: 2px solid #00aaff;
+            box-shadow: 0 0 12px rgba(0, 170, 255, 0.2);
         }
-        .hero .developer-credit {
+        pre strong {
+            color: #0077cc;
+        }
+        pre .string { color: #28a745; }
+        pre .number { color: #dc3545; }
+        pre .boolean { color: #6f42c1; }
+        pre .null { color: #6c757d; }
+        pre .key { color: #0077cc; }
+        input {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #00aaff;
+            color: #1a1a1a;
+            border-radius: 12px;
+            transition: all 0.4s ease;
+        }
+        input:focus {
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 0 20px rgba(0, 170, 255, 0.6);
+            outline: none;
+        }
+        .cool-button {
+            background: linear-gradient(45deg, #00aaff, #00ccff, #00eaff);
+            color: #ffffff;
+            padding: 14px 28px;
+            border-radius: 30px;
+            border: none;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            box-shadow: 0 6px 20px rgba(0, 170, 255, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.3);
+            transition: all 0.4s ease-in-out, box-shadow 0.4s ease-in-out;
+            position: relative;
+            overflow: hidden;
+        }
+        .cool-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+        .cool-button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        .cool-button:hover {
+            transform: translateY(-5px) scale(1.08);
+            box-shadow: 0 10px 25px rgba(0, 170, 255, 0.7), inset 0 0 15px rgba(255, 255, 255, 0.4);
+        }
+        .cool-button:active {
+            transform: translateY(2px) scale(0.98);
+            box-shadow: 0 4px 15px rgba(0, 170, 255, 0.3), inset 0 0 8px rgba(255, 255, 255, 0.2);
+        }
+        .feature-card {
+            background: rgba(255, 255, 255, 0.98);
+            border: 2px solid #00aaff;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 0 20px rgba(0, 170, 255, 0.3);
+            transition: transform 0.4s ease-in-out, box-shadow 0.4s ease-in-out;
+        }
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 0 30px rgba(0, 170, 255, 0.5);
+        }
+        .dev-showcase {
+            position: relative;
+            width: 100%;
+            height: 250px;
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid #00aaff;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0, 170, 255, 0.3);
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 0.8rem;
         }
-        .hero .developer-credit img {
-            height: 35px;
-            margin-left: 8px;
-            border-radius: 6px;
-        }
-        .status-indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 8px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
-        }
-        .status-online { background-color: #28a745; }
-        .status-offline { background-color: #dc3545; }
-        .card {
-            border: none;
-            border-radius: 12px;
-            background: #ffffff;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-        }
-        .docs-section {
-            background: #ffffff;
-            padding: 2.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        }
-        .docs-section h3 {
-            color: #F0B90B;
-            font-weight: 600;
-            background: #F0B90B;
-            color: #ffffff;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-        }
-        .docs-section pre {
-            background: #f1f3f5;
-            padding: 1.5rem;
-            border-radius: 12px;
-            font-size: 0.9rem;
-            border: 1px solid #e0e0e0;
-        }
-        .docs-section .docs-content {
-            background: #f8f9fa;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-        }
-        .ad-section {
-            background: #ffffff;
-            padding: 2.5rem;
-            text-align: center;
-            border-radius: 12px;
-            margin: 2rem 0;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            border-left: 5px solid #00C4B4;
-            transition: transform 0.3s ease;
-        }
-        .ad-section:hover {
-            transform: translateY(-4px);
-        }
-        .ad-section h2 {
-            font-weight: 600;
-            color: #1a1a1a;
+        .dev-text {
+            font-family: 'Orbitron', sans-serif;
             font-size: 2rem;
+            color: #00aaff;
+            text-shadow: 0 0 10px rgba(0, 170, 255, 0.5);
+            margin-right: 20px;
         }
-        .ad-section .btn {
-            background: #00C4B4;
-            color: #ffffff;
-            padding: 0.7rem 1.8rem;
-            font-weight: 500;
-            border-radius: 8px;
-            display: inline-flex;
-            align-items: center;
-        }
-        .ad-section .btn:hover {
-            background: #00a89a;
-            transform: scale(1.05);
-        }
-        .ad-section .telegram-icon {
-            font-size: 1.1rem;
-            margin-left: 0.5rem;
-            animation: pulse 1.5s infinite;
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.15); }
-            100% { transform: scale(1); }
-        }
-        footer {
-            background: #ffffff;
-            padding: 3rem 0;
-            border-top: 1px solid #e9ecef;
-            text-align: center;
-            border-radius: 16px 16px 0 0;
-        }
-        .footer-social a {
-            color: #1a1a1a;
-            font-size: 1.8rem;
-            margin: 0 12px;
-            transition: color 0.3s ease;
-        }
-        .footer-social a:hover {
-            color: #F0B90B;
-        }
-        .footer-text {
-            font-size: 1.1rem;
-            color: #4b5563;
-            margin-top: 1.5rem;
-        }
-        .footer-text a {
-            color: #00C4B4;
-            text-decoration: none;
-        }
-        .footer-text a:hover {
-            text-decoration: underline;
+        .dev-gif {
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
         }
     </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="#">
-                <img src="https://kurigram.live/assets/pyro.gif" alt="Pyro Animation">
-                Smart Dev's CC XEN API
+    <canvas id="canvas"></canvas>
+    <nav class="navbar py-4">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-1a1a1a flex items-center">
+                <i class="fas fa-credit-card text-blue-500 mr-2"></i>
+                Smart CC XEN Web
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="#status">Status</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#docs">Docs</a></li>
-                </ul>
+            <div class="flex items-center space-x-6">
+                <a href="#showcase" class="nav-link text-1a1a1a">Showcase</a>
+                <a href="#features" class="nav-link text-1a1a1a">Features</a>
+                <a href="#docs" class="nav-link text-1a1a1a">Docs</a>
+                <a href="#support" class="nav-link text-1a1a1a">Support</a>
+                <a href="#developer" class="nav-link text-1a1a1a">Developer</a>
+                <a href="https://t.me/TheSmartDev" target="_blank" class="nav-link text-1a1a1a">Updates</a>
             </div>
         </div>
     </nav>
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <div class="developer-credit">
-                <span>API Dev: <a href="https://t.me/ISmartCoder" target="_blank">Abir Arafat Chawdhury</a></span>
-                <img src="https://kurigram.live/assets/pyro.gif" alt="Pyro Animation">
+    <header class="hero">
+        <div class="container mx-auto px-4">
+            <h1 class="text-5xl font-bold mb-4 text-1a1a1a">Smart CC XEN Web</h1>
+            <p class="text-xl mb-6 text-1a1a1a">Explore futuristic features and showcase Dev @ISmartCoder with a stunning white interface.</p>
+            <div class="flex justify-center items-center space-x-2 mb-6">
+                <span class="status-indicator bg-gray-400 w-3 h-3 rounded-full" id="statusIndicator"></span>
+                <span id="statusText" class="text-lg text-1a1a1a">Checking API Server Status...</span>
             </div>
-            <h1>Big Smart Dev's CC XEN API</h1>
-            <p class="lead text-muted">Generate test credit card numbers effortlessly, powered by @ISmartCoder.</p>
-            <div class="mt-4">
-                <p><span class="status-indicator" id="status-indicator"></span>API Status: <span id="api-status">Checking...</span></p>
-                <p>API Version: 1.0.0</p>
+            <a href="#showcase" class="cool-button mt-4">View Showcase</a>
+        </div>
+    </header>
+    <section id="showcase" class="container mx-auto px-4 py-16">
+        <h2 class="text-3xl font-bold text-center mb-8 text-1a1a1a">Dev @ISmartCoder Showcase</h2>
+        <div class="dev-showcase" id="devShowcase">
+            <div class="dev-text">Dev @ISmartCoder</div>
+            <img src="https://kurigram.live/assets/pyro.gif" alt="Pyro GIF" class="dev-gif">
+        </div>
+    </section>
+    <section id="features" class="container mx-auto px-4 py-16">
+        <h2 class="text-3xl font-bold text-center mb-8 text-1a1a1a">Key Features</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="feature-card text-center">
+                <i class="fas fa-user-tie fa-3x mb-4 text-blue-500"></i>
+                <h3 class="text-lg font-semibold mb-2 text-1a1a1a">Dev Showcase</h3>
+                <p class="text-gray-700">Highlighting Dev @ISmartCoder with a dynamic GIF and bold identity.</p>
+            </div>
+            <div class="feature-card text-center">
+                <i class="fas fa-cogs fa-3x mb-4 text-blue-500"></i>
+                <h3 class="text-lg font-semibold mb-2 text-1a1a1a">Futuristic Design</h3>
+                <p class="text-gray-700">Sleek white theme with cosmic animations and smooth, interactive elements.</p>
+            </div>
+            <div class="feature-card text-center">
+                <i class="fas fa-users fa-3x mb-4 text-blue-500"></i>
+                <h3 class="text-lg font-semibold mb-2 text-1a1a1a">Community Driven</h3>
+                <p class="text-gray-700">Built with input from a global community of developers and testers.</p>
+            </div>
+            <div class="feature-card text-center">
+                <i class="fas fa-shield-alt fa-3x mb-4 text-blue-500"></i>
+                <h3 class="text-lg font-semibold mb-2 text-1a1a1a">Secure Environment</h3>
+                <p class="text-gray-700">Ensures a safe and reliable platform with robust data handling practices.</p>
+            </div>
+            <div class="feature-card text-center">
+                <i class="fas fa-rocket fa-3x mb-4 text-blue-500"></i>
+                <h3 class="text-lg font-semibold mb-2 text-1a1a1a">High Performance</h3>
+                <p class="text-gray-700">Optimized for speed with non-blocking asynchronous technology.</p>
+            </div>
+            <div class="feature-card text-center">
+                <i class="fas fa-globe fa-3x mb-4 text-blue-500"></i>
+                <h3 class="text-lg font-semibold mb-2 text-1a1a1a">Global Accessibility</h3>
+                <p class="text-gray-700">Accessible worldwide with a responsive design for all devices.</p>
             </div>
         </div>
     </section>
-
-    <!-- Advertisement Section -->
-    <section class="ad-section">
-        <div class="container">
-            <h2>Need Custom APIs or Bots? 🧐</h2>
-            <p>Supercharge your projects with custom-built APIs and Telegram bots in Python, PHP, Node.js, and more. Partner with us for innovative, high-performance solutions.</p>
-            <a href="https://t.me/ISmartCoder" target="_blank" class="btn">
-                Connect with @ISmartCoder
-                <i class="fab fa-telegram telegram-icon"></i>
-            </a>
+    <section id="async-free" class="container mx-auto px-4 py-16 text-center">
+        <h2 class="text-3xl font-bold mb-8 text-1a1a1a">Forever Non-Blocking Asynchronous & Free</h2>
+        <div class="response-card p-6 max-w-2xl mx-auto">
+            <p class="text-gray-700 mb-4">Smart CC XEN Web is designed with non-blocking asynchronous technology, ensuring lightning-fast performance. Best of all, it’s completely free for all users, with no hidden costs or limits on usage.</p>
+            <i class="fas fa-infinity fa-3x mb-4 text-blue-500"></i>
+            <p class="text-gray-700">Enjoy unlimited access to our cutting-edge tools, crafted for developers and testers worldwide.</p>
         </div>
     </section>
-
-    <!-- Documentation Section -->
-    <section id="docs" class="py-5">
-        <div class="container">
-            <h2 class="mb-4 text-center" style="font-weight: 600; color: #1a1a1a;">API Documentation</h2>
-            <div class="card docs-section">
-                <div class="docs-content">
-                    <h3>GET /gen</h3>
-                    <p><strong>Description:</strong> Generates test credit card numbers based on the provided BIN, with optional expiry date and CVV.</p>
-                    <p><strong>Use Case:</strong> Create valid test credit card numbers for development and testing purposes, supporting both AMEX and non-AMEX cards.</p>
-                    <p><strong>Parameters:</strong></p>
-                    <table class="table table-bordered" style="background: #f8f9fa; border-radius: 12px;">
-                        <thead>
-                            <tr style="background: #F0B90B; color: #ffffff;">
-                                <th>Parameter</th>
-                                <th>Type</th>
-                                <th>Description</th>
-                                <th>Default</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><code>bin</code></td>
-                                <td>String</td>
-                                <td>Card BIN (6-15 digits or up to 16 with 'x')</td>
-                                <td>Required</td>
-                            </tr>
-                            <tr>
-                                <td><code>month</code></td>
-                                <td>String</td>
-                                <td>Expiry month (MM, e.g., 06)</td>
-                                <td>Random</td>
-                            </tr>
-                            <tr>
-                                <td><code>year</code></td>
-                                <td>String</td>
-                                <td>Expiry year (YYYY or YY, e.g., 2027)</td>
-                                <td>Random</td>
-                            </tr>
-                            <tr>
-                                <td><code>cvv</code></td>
-                                <td>String</td>
-                                <td>CVV (3 or 4 digits)</td>
-                                <td>Random</td>
-                            </tr>
-                            <tr>
-                                <td><code>amount</code></td>
-                                <td>Integer</td>
-                                <td>Number of cards to generate (1-2000)</td>
-                                <td>10</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <p><strong>Example Requests:</strong></p>
-                    <pre>GET /gen?bin=375006922445xxxx&month=06&year=2027&amount=12</pre>
-                    <pre>GET /gen?bin=453201xxxxxx&amount=2&month=12&year=2027&cvv=123</pre>
-                    <pre>GET /gen?bin=453201xxxxxx&amount=5</pre>
-                    <p><strong>Example Response:</strong></p>
-                    <pre>
-{
-    "status": "success",
-    "bin": "375006922445xxxx",
-    "amount": 12,
-    "cards": [
-        "3750069224451234|06|2027|1234",
-        "3750069224455678|06|2027|5678",
-        ...
-    ],
-    "Bank": "American Express",
-    "Country": "United States 🇺🇸",
-    "BIN Info": "AMEX - CREDIT",
-    "api_owner": "@ISmartCoder",
-    "api_updates": "t.me/TheSmartDev"
-}
-                    </pre>
-                    <p><strong>Response Fields:</strong></p>
-                    <ul>
-                        <li><code>status</code>: Indicates success or error</li>
-                        <li><code>bin</code>: Input BIN</li>
-                        <li><code>amount</code>: Number of cards generated</li>
-                        <li><code>cards</code>: Array of generated cards (card_number|month|year|cvv)</li>
-                        <li><code>Bank</code>: Issuing bank name</li>
-                        <li><code>Country</code>: Issuing country with flag</li>
-                        <li><code>BIN Info</code>: Card scheme and type</li>
-                        <li><code>api_owner</code>: Developer handle</li>
-                        <li><code>api_updates</code>: Updates channel</li>
-                    </ul>
-                    <p><strong>Notes:</strong></p>
-                    <ul>
-                        <li>BIN can include 'x' for random digits or full numbers.</li>
-                        <li>AMEX cards have 15 digits and 4-digit CVV; others have 16 digits and 3-digit CVV.</li>
-                        <li>Expiry date can be provided as MM/YYYY or MM/YY.</li>
-                        <li>Invalid inputs return a 400 error with a descriptive message.</li>
-                        <li>Contact @ISmartCoder for API access and usage details.</li>
-                    </ul>
-                </div>
-                <p class="mt-4">
-                    Developed with ❤️ By @ISmartCoder
-                </p>
+    <section id="support" class="container mx-auto px-4 py-16 text-center">
+        <h2 class="text-3xl font-bold mb-8 text-1a1a1a">Support</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="response-card p-8">
+                <h3 class="text-xl font-semibold mb-6 text-1a1a1a">Get Help</h3>
+                <p class="text-gray-700 mb-6">Need assistance? Contact our support team for quick and reliable help with any issues or questions.</p>
+                <a href="https://t.me/ISmartCoder" target="_blank" class="cool-button mt-6">Contact Support</a>
+            </div>
+            <div class="response-card p-8">
+                <h3 class="text-xl font-semibold mb-6 text-1a1a1a">FAQ</h3>
+                <p class="text-gray-700 mb-6">Check our frequently asked questions for common queries and solutions.</p>
+                <a href="https://t.me/TheSmartDev" target="_blank" class="cool-button mt-6">View FAQ</a>
             </div>
         </div>
     </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-social mb-4">
-                <a href="https://github.com/TheSmartDevs" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
-                <a href="https://facebook.com/abirxdhackz" target="_blank" title="Facebook"><i class="fab fa-facebook"></i></a>
-                <a href="https://instagram.com/abirxdhackz" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
-                <a href="https://twitter.com/abirxdhackz" target="_blank" title="Twitter"><i class="fab fa-twitter"></i></a>
-                <a href="https://youtube.com/@abirxdhackz" target="_blank" title="YouTube"><i class="fab fa-youtube"></i></a>
-                <a href="https://t.me/ISmartCoder" target="_blank" title="Telegram"><i class="fab fa-telegram"></i></a>
-            </div>
-            <p class="footer-text">
-                Crafted with <strong>passion</strong> by <a href="https://t.me/ISmartCoder" target="_blank">@ISmartCoder</a> | Join our <strong>community</strong>: <a href="https://t.me/TheSmartDev" target="_blank">t.me/TheSmartDev</a>
-            </p>
-            <p class="text-muted mt-3">© 2025 Big Smart Dev's CC XEN API. All rights reserved.</p>
+    <section id="hire-abir" class="container mx-auto px-4 py-16 text-center bg-gray-100 rounded-3xl">
+        <h2 class="text-3xl font-bold mb-8 text-1a1a1a">Hire Abir for Custom Works</h2>
+        <div class="response-card p-8 max-w-2xl mx-auto">
+            <p class="text-gray-700 mb-6">Looking for custom API development, Telegram bots, or unique software solutions? Abir Arafat Chawdhury (@ISmartCoder) offers expert services in Python, PHP, Node.js, and more. From innovative designs to robust implementations, elevate your projects with a seasoned developer.</p>
+            <i class="fas fa-code fa-3x mb-4 text-blue-500"></i>
+            <p class="text-gray-700 mb-6">Contact today for tailored, high-performance solutions that meet your needs!</p>
+            <a href="https://t.me/ISmartCoder" target="_blank" class="cool-button mt-6">Hire Now</a>
         </div>
+    </section>
+    <section id="docs" class="container mx-auto px-4 py-16 text-center">
+        <h2 class="text-3xl font-bold mb-8 text-1a1a1a">API Documentation</h2>
+        <div class="grid grid-cols-1 gap-8">
+            <div class="response-card p-8 max-w-2xl mx-auto">
+                <h3 class="text-xl font-semibold mb-2 text-1a1a1a">GET /gen (Combined Method)</h3>
+                <p class="text-gray-700">Generate test credit card numbers using a single combined BIN string (e.g., BIN|month|year|cvv). This endpoint is under development.</p>
+                <pre class="bg-gray-200 p-4 rounded-lg text-sm"><code class="language-json"><span class="key">"request"</span>: <span class="string">"curl -X GET \"http://localhost:5000/gen?bin=453201xxxxxx|12|2027|123\""</span>,
+<span class="key">"response_placeholder"</span>: {
+  <span class="key">"status"</span>: <span class="string">"under_development"</span>,
+  <span class="key">"message"</span>: <span class="string">"Combined method will be available soon. Check back for updates!"</span>
+}</code></pre>
+            </div>
+            <div class="response-card p-8 max-w-2xl mx-auto">
+                <h3 class="text-xl font-semibold mb-2 text-1a1a1a">GET /gen (Split Method)</h3>
+                <p class="text-gray-700">Generate test credit card numbers using separate parameters for BIN, month, year, CVV, and amount. This endpoint is under development.</p>
+                <pre class="bg-gray-200 p-4 rounded-lg text-sm"><code class="language-json"><span class="key">"request"</span>: <span class="string">"curl -X GET \"http://localhost:5000/gen?bin=453201xxxxxx&month=12&year=2027&cvv=123&amount=2\""</span>,
+<span class="key">"response_placeholder"</span>: {
+  <span class="key">"status"</span>: <span class="string">"under_development"</span>,
+  <span class="key">"message"</span>: <span class="string">"Split method will be available soon. Check back for updates!"</span>
+}</code></pre>
+            </div>
+        </div>
+    </section>
+    <section id="developer" class="container mx-auto px-4 py-16 text-center">
+        <h2 class="text-3xl font-bold mb-8 text-1a1a1a">The Architect of Smart CC XEN Web</h2>
+        <div class="response-card p-8 max-w-md mx-auto">
+            <i class="fas fa-python text-blue-500 text-4x mb-3"></i>
+            <h3 class="text-xl font-semibold mb-4 text-1a1a1a px-6">   Abir Arafat Chawdhury   </h3>
+            <p class="text-gray-700 mb-4">Crafted with passion by @ISmartCoder</p>
+            <p class="text-gray-700 mb-6">Join the <a href="https://t.me/TheSmartDev" target="_blank" class="text-blue-500 hover:text-blue-400">API Updates Channel</a> for the latest updates!</p>
+            <a href="https://t.me/ISmartCoder" class="cool-button mt-6">Contact @ISmartCoder</a>
+        </div>
+    </section>
+    <footer class="bg-white bg-opacity-95 py-10 text-center">
+        <div class="social-icons mb-6">
+            <a href="https://t.me/TheSmartDev" target="_blank"><i class="fa-brands fa-telegram text-blue-500"></i></a>
+            <a href="https://x.com/abirxdhackz" target="_blank"><i class="fa-brands fa-twitter text-blue-500"></i></a>
+            <a href="https://github.com/TheSmartDevs" target="_blank"><i class="fa-brands fa-github text-gray-800"></i></a>
+            <a href="https://facebook.com/abirxdhackz" target="_blank"><i class="fa-brands fa-facebook-f text-blue-700"></i></a>
+            <a href="https://instagram.com/abirxdhackz" target="_blank"><i class="fa-brands fa-instagram text-pink-600"></i></a>
+            <a href="https://youtube.com/@abirxdhackz" target="_blank"><i class="fa-brands fa-youtube text-red-600"></i></a>
+        </div>
+        <p class="text-1a1a1a mb-2">Built with ❤️ by <a href="https://t.me/ISmartCoder" target="_blank" class="text-blue-500 hover:text-blue-400"><i class="fas fa-python"></i> @ISmartCoder</a></p>
+        <p class="text-1a1a1a mb-4">Join our community at <a href="https://t.me/TheSmartDev" target="_blank" class="text-blue-500 hover:text-blue-400"><i class="fa-brands fa-telegram"></i> @TheSmartDev</a></p>
+        <p class="text-gray-600">© 2025 Smart CC XEN Web</p>
     </footer>
-
-    <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        const canvas = document.getElementById('canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        camera.position.z = 5;
+        const particles = new THREE.Group();
+        for (let i = 0; i < 300; i++) {
+            const geometry = new THREE.SphereGeometry(0.03, 20, 20);
+            const material = new THREE.MeshBasicMaterial({ color: 0x00aaff, transparent: true, opacity: 0.85 });
+            const particle = new THREE.Mesh(geometry, material);
+            particle.position.set(
+                (Math.random() - 0.5) * 15,
+                (Math.random() - 0.5) * 15,
+                (Math.random() - 0.5) * 15
+            );
+            particles.add(particle);
+        }
+        scene.add(particles);
+        function animate() {
+            requestAnimationFrame(animate);
+            particles.rotation.y += 0.0015;
+            particles.rotation.x += 0.001;
+            renderer.render(scene, camera);
+        }
+        animate();
         async function checkApiStatus() {
-            const statusIndicator = document.getElementById('status-indicator');
-            const statusText = document.getElementById('api-status');
-            
             try {
                 const response = await fetch('/', { method: 'GET' });
+                const statusIndicator = document.getElementById('statusIndicator');
+                const statusText = document.getElementById('statusText');
                 if (response.ok) {
-                    statusIndicator.classList.add('status-online');
-                    statusText.textContent = 'Alive';
+                    statusIndicator.classList.remove('bg-gray-400');
+                    statusIndicator.classList.add('bg-green-500');
+                    statusText.textContent = 'API is online and operational';
                 } else {
-                    statusIndicator.classList.add('status-offline');
-                    statusText.textContent = 'Offline';
+                    statusIndicator.classList.remove('bg-gray-400');
+                    statusIndicator.classList.add('bg-red-500');
+                    statusText.textContent = 'API is offline';
                 }
             } catch (error) {
-                statusIndicator.classList.add('status-offline');
-                statusText.textContent = 'Offline';
+                document.getElementById('statusIndicator').classList.remove('bg-gray-400');
+                document.getElementById('statusIndicator').classList.add('bg-red-500');
+                document.getElementById('statusText').textContent = 'Failed to connect to API';
+                console.error('API Status Check Error:', error);
             }
         }
-
-        window.onload = checkApiStatus;
+        document.addEventListener('DOMContentLoaded', () => {
+            checkApiStatus();
+        });
     </script>
 </body>
 </html>
