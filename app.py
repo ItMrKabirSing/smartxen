@@ -211,19 +211,11 @@ def parse_input(bin, month=None, year=None, cvv=None, amount=10):
     if cvv and cvv.lower() in ['xxx', 'xxxx']:
         parsed_cvv = None
     elif cvv and cvv.isdigit():
-        is_amex = is_amex_bin(parsed_bin) if parsed_bin else False
-        expected_cvv_length = 4 if is_amex else 3
-        if len(cvv) == expected_cvv_length:
-            parsed_cvv = cvv
+        parsed_cvv = cvv
     elif parsed_cvv and parsed_cvv.lower() in ['xxx', 'xxxx']:
         parsed_cvv = None
     elif parsed_cvv and parsed_cvv.isdigit():
-        is_amex = is_amex_bin(parsed_bin) if parsed_bin else False
-        expected_cvv_length = 4 if is_amex else 3
-        if len(parsed_cvv) == expected_cvv_length:
-            parsed_cvv = parsed_cvv
-        else:
-            return None, None, None, None, None
+        parsed_cvv = parsed_cvv
     return parsed_bin, parsed_month, parsed_year, parsed_cvv, parsed_amount
 
 @app.route('/', methods=['GET'])
@@ -262,12 +254,10 @@ def generate_cards():
         }), 400
     if cvv is not None:
         is_amex = is_amex_bin(bin)
-        expected_cvv_length = 4 if is_amex else 3
-        if len(cvv) != expected_cvv_length:
-            cvv_type = "4 digits for AMEX" if is_amex else "3 digits for non-AMEX"
+        if is_amex and len(cvv) != 4:
             return jsonify({
                 "status": "error",
-                "message": f"Invalid CVV format: CVV must be {cvv_type}",
+                "message": "Invalid CVV format: CVV must be 4 digits for AMEX",
                 "api_owner": "@ISmartCoder",
                 "api_updates": "t.me/TheSmartDev"
             }), 400
