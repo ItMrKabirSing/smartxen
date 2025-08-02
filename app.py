@@ -47,7 +47,7 @@ def generate_credit_card(bin, amount, month=None, year=None, cvv=None):
     cards = []
     is_amex = is_amex_bin(bin)
     target_length = 15 if is_amex else 16
-    cvv_length = 4 if is_amex else 3
+    cvv_length = 4 if is_amex else (len(cvv) if cvv and cvv.isdigit() and len(cvv) in [3, 4] else 3)
     bin_digits = re.sub(r'[^0-9]', '', bin)
     if len(bin_digits) > target_length:
         return []
@@ -73,7 +73,7 @@ def generate_custom_cards(bin, amount, month=None, year=None, cvv=None):
     cards = []
     is_amex = is_amex_bin(bin)
     target_length = 15 if is_amex else 16
-    cvv_length = 4 if is_amex else 3
+    cvv_length = 4 if is_amex else (len(cvv) if cvv and cvv.isdigit() and len(cvv) in [3, 4] else 3)
     for _ in range(amount):
         while True:
             card_body = ''.join([str(random.randint(0, 9)) if char.lower() == 'x' else char for char in bin])
@@ -210,11 +210,11 @@ def parse_input(bin, month=None, year=None, cvv=None, amount=10):
                 return None, None, None, None, None
     if cvv and cvv.lower() in ['xxx', 'xxxx']:
         parsed_cvv = None
-    elif cvv and cvv.isdigit():
+    elif cvv and cvv.isdigit() and len(cvv) in [3, 4]:
         parsed_cvv = cvv
     elif parsed_cvv and parsed_cvv.lower() in ['xxx', 'xxxx']:
         parsed_cvv = None
-    elif parsed_cvv and parsed_cvv.isdigit():
+    elif parsed_cvv and parsed_cvv.isdigit() and len(parsed_cvv) in [3, 4]:
         parsed_cvv = parsed_cvv
     return parsed_bin, parsed_month, parsed_year, parsed_cvv, parsed_amount
 
