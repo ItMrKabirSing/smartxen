@@ -3,12 +3,15 @@ import re
 import random
 import requests
 import pycountry
+
 app = Flask(__name__)
+
 def is_amex_bin(bin_str):
     clean_bin = bin_str.replace('x', '').replace('X', '')
     if len(clean_bin) >= 2:
         return clean_bin[:2] in ['34', '37']
     return False
+
 def luhn_algorithm(card_number):
     digits = [int(d) for d in str(card_number) if d.isdigit()]
     if not digits or len(digits) < 13:
@@ -23,6 +26,7 @@ def luhn_algorithm(card_number):
         else:
             checksum += digit
     return checksum % 10 == 0
+
 def calculate_luhn_check_digit(partial_card_number):
     digits = [int(d) for d in str(partial_card_number) if d.isdigit()]
     if not digits:
@@ -38,6 +42,7 @@ def calculate_luhn_check_digit(partial_card_number):
             checksum += digit
     check_digit = (10 - (checksum % 10)) % 10
     return check_digit
+
 def generate_credit_card(bin, amount, month=None, year=None, cvv=None):
     cards = []
     is_amex = is_amex_bin(bin)
@@ -63,6 +68,7 @@ def generate_credit_card(bin, amount, month=None, year=None, cvv=None):
         formatted_card = f"{card_number}|{card_month}|{card_year}|{card_cvv}"
         cards.append(formatted_card)
     return cards
+
 def generate_custom_cards(bin, amount, month=None, year=None, cvv=None):
     cards = []
     is_amex = is_amex_bin(bin)
@@ -88,6 +94,7 @@ def generate_custom_cards(bin, amount, month=None, year=None, cvv=None):
         formatted_card = f"{card_number}|{card_month}|{card_year}|{card_cvv}"
         cards.append(formatted_card)
     return cards
+
 def get_flag(country_code):
     try:
         country = pycountry.countries.get(alpha_2=country_code)
@@ -98,6 +105,7 @@ def get_flag(country_code):
         return country_name, flag_emoji
     except Exception:
         return "Unknown Country", "🇺🇳"
+
 def get_bin_info(bin):
     clean_bin = bin.replace('x', '').replace('X', '')[:6]
     try:
@@ -130,20 +138,15 @@ def get_bin_info(bin):
             'Country': 'Unknown Country 🇺🇳',
             'BIN Info': 'Unknown Scheme - Unknown Type'
         }
-def parse_input(user_input):
+
+def parse_input(user_input, amount=10):
     bin = None
     month = None
     year = None
     cvv = None
-    amount = 10
+    parsed_amount = amount
     if not user_input:
         return None, None, None, None, None
-    input_parts = user_input.strip().split()
-    if len(input_parts) > 1 and input_parts[-1].isdigit():
-        potential_amount = int(input_parts[-1])
-        if 1 <= potential_amount <= 9999:
-            amount = potential_amount
-            user_input = ' '.join(input_parts[:-1])
     digits_x_pattern = r'(?:[0-9xX][a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};:\'",.<>/?\\|]*)+(?:[|:/][\d]{2}|xx|xxx|xxxx]+(?:[|:/][\d]{2,4}|xx|xxx|xxxx]+(?:[|:/][\d]{3,4}|xxx|xxxx|rnd]+)?)?)?'
     matches = re.findall(digits_x_pattern, user_input, re.IGNORECASE)
     if matches:
@@ -195,10 +198,12 @@ def parse_input(user_input):
             cvv = None
         elif parts[3].isdigit():
             cvv = parts[3]
-    return bin, month, year, cvv, amount
+    return bin, month, year, cvv, parsed_amount
+
 @app.route('/', methods=['GET'])
 def status():
     return render_template('status.html')
+
 @app.route('/gen', methods=['GET'])
 def generate_cards():
     CC_GEN_LIMIT = 2000
@@ -214,6 +219,13 @@ def generate_cards():
             "api_owner": "@ISmartCoder",
             "api_updates": "t.me/TheSmartDev"
         }), 400
+    if amount < 1 or amount > CC_GEN_LIMIT:
+        return jsonify({
+            "status": "error",
+            "message": f"Invalid amount: Must be between 1 and {CC_GEN_LIMIT}",
+            "api_owner": "@ISmartCoder",
+            "api_updates": "t.me/TheSmartDev"
+        }), 400
     user_input = bin
     if month:
         user_input += f"|{month}"
@@ -221,18 +233,11 @@ def generate_cards():
         user_input += f"|{year}"
     if cvv:
         user_input += f"|{cvv}"
-    bin, month, year, cvv, amount = parse_input(user_input)
+    bin, month, year, cvv, parsed_amount = parse_input(user_input, amount)
     if not bin:
         return jsonify({
             "status": "error",
             "message": "Invalid BIN: Must be 6-15 digits or up to 16 digits with 'x'",
-            "api_owner": "@ISmartCoder",
-            "api_updates": "t.me/TheSmartDev"
-        }), 400
-    if amount > CC_GEN_LIMIT:
-        return jsonify({
-            "status": "error",
-            "message": f"Limit exceeded: Maximum {CC_GEN_LIMIT} cards allowed",
             "api_owner": "@ISmartCoder",
             "api_updates": "t.me/TheSmartDev"
         }), 400
@@ -252,12 +257,12 @@ def generate_cards():
                 "api_owner": "@ISmartCoder",
                 "api_updates": "t.me/TheSmartDev"
             }), 400
-    cards = generate_credit_card(bin, amount, month, year, cvv)
+    cards = generate_credit_card(bin, parsed_amount, month, year, cvv)
     bin_info = get_bin_info(bin)
     return jsonify({
         "status": "success",
         "bin": bin,
-        "amount": amount,
+        "amount": parsed_amount,
         "cards": cards,
         "Bank": bin_info['Bank'],
         "Country": bin_info['Country'],
@@ -265,5 +270,6 @@ def generate_cards():
         "api_owner": "@ISmartCoder",
         "api_updates": "t.me/TheSmartDev"
     }), 200
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
