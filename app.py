@@ -3,15 +3,12 @@ import re
 import random
 import requests
 import pycountry
-
 app = Flask(__name__)
-
 def is_amex_bin(bin_str):
     clean_bin = bin_str.replace('x', '').replace('X', '')
     if len(clean_bin) >= 2:
         return clean_bin[:2] in ['34', '37']
     return False
-
 def luhn_algorithm(card_number):
     digits = [int(d) for d in str(card_number) if d.isdigit()]
     if not digits or len(digits) < 13:
@@ -26,7 +23,6 @@ def luhn_algorithm(card_number):
         else:
             checksum += digit
     return checksum % 10 == 0
-
 def calculate_luhn_check_digit(partial_card_number):
     digits = [int(d) for d in str(partial_card_number) if d.isdigit()]
     if not digits:
@@ -42,14 +38,13 @@ def calculate_luhn_check_digit(partial_card_number):
             checksum += digit
     check_digit = (10 - (checksum % 10)) % 10
     return check_digit
-
 def generate_credit_card(bin, amount, month=None, year=None, cvv=None):
     cards = []
     is_amex = is_amex_bin(bin)
     target_length = 15 if is_amex else 16
-    cvv_length = 4 if is_amex else (len(cvv) if cvv and cvv.isdigit() and len(cvv) in [3, 4] else 3)
+    cvv_length = 4 if is_amex else 3
     bin_digits = re.sub(r'[^0-9]', '', bin)
-    if len(bin_digits) > target_length:
+    if len(bin_digits) >= target_length:
         return []
     for _ in range(amount):
         card_body = bin_digits
@@ -68,30 +63,31 @@ def generate_credit_card(bin, amount, month=None, year=None, cvv=None):
         formatted_card = f"{card_number}|{card_month}|{card_year}|{card_cvv}"
         cards.append(formatted_card)
     return cards
-
 def generate_custom_cards(bin, amount, month=None, year=None, cvv=None):
     cards = []
     is_amex = is_amex_bin(bin)
     target_length = 15 if is_amex else 16
-    cvv_length = 4 if is_amex else (len(cvv) if cvv and cvv.isdigit() and len(cvv) in [3, 4] else 3)
+    cvv_length = 4 if is_amex else 3
+    bin_digits = re.sub(r'[^0-9]', '', bin)
+    if len(bin_digits) >= target_length:
+        return []
     for _ in range(amount):
-        while True:
-            card_body = ''.join([str(random.randint(0, 9)) if char.lower() == 'x' else char for char in bin])
-            card_body_digits = re.sub(r'[^0-9]', '', card_body)
-            remaining_digits = target_length - len(card_body_digits) - 1
-            if remaining_digits < 0:
-                break
-            card_body_digits += ''.join([str(random.randint(0, 9)) for _ in range(remaining_digits)])
-            check_digit = calculate_luhn_check_digit(card_body_digits)
-            card_number = card_body_digits + str(check_digit)
-            if luhn_algorithm(card_number):
-                card_month = month if month is not None else f"{random.randint(1, 12):02d}"
-                card_year = year if year is not None else str(random.randint(2025, 2035))
-                card_cvv = cvv if cvv is not None else ''.join([str(random.randint(0, 9)) for _ in range(cvv_length)])
-                cards.append(f"{card_number}|{card_month}|{card_year}|{card_cvv}")
-                break
+        card_body = bin_digits
+        remaining_digits = target_length - len(card_body) - 1
+        if remaining_digits < 0:
+            continue
+        for _ in range(remaining_digits):
+            card_body += str(random.randint(0, 9))
+        check_digit = calculate_luhn_check_digit(card_body)
+        card_number = card_body + str(check_digit)
+        if not luhn_algorithm(card_number):
+            continue
+        card_month = month if month is not None else f"{random.randint(1, 12):02d}"
+        card_year = year if year is not None else str(random.randint(2025, 2035))
+        card_cvv = cvv if cvv is not None else ''.join([str(random.randint(0, 9)) for _ in range(cvv_length)])
+        formatted_card = f"{card_number}|{card_month}|{card_year}|{card_cvv}"
+        cards.append(formatted_card)
     return cards
-
 def get_flag(country_code):
     try:
         country = pycountry.countries.get(alpha_2=country_code)
@@ -102,7 +98,6 @@ def get_flag(country_code):
         return country_name, flag_emoji
     except Exception:
         return "Unknown Country", "🇺🇳"
-
 def get_bin_info(bin):
     clean_bin = bin.replace('x', '').replace('X', '')[:6]
     try:
@@ -135,101 +130,83 @@ def get_bin_info(bin):
             'Country': 'Unknown Country 🇺🇳',
             'BIN Info': 'Unknown Scheme - Unknown Type'
         }
-
-def parse_input(bin, month=None, year=None, cvv=None, amount=10):
-    parsed_bin = None
-    parsed_month = None
-    parsed_year = None
-    parsed_cvv = None
-    parsed_amount = amount if isinstance(amount, int) and 1 <= amount <= 9999 else 10
+def parse_input(user_input):
+    bin = None
+    month = None
+    year = None
+    cvv = None
+    amount = 10
+    if not user_input:
+        return None, None, None, None, None
+    input_parts = user_input.strip().split()
+    if len(input_parts) > 1 and input_parts[-1].isdigit():
+        potential_amount = int(input_parts[-1])
+        if 1 <= potential_amount <= 9999:
+            amount = potential_amount
+            user_input = ' '.join(input_parts[:-1])
+    digits_x_pattern = r'(?:[0-9xX][a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};:\'",.<>/?\\|]*)+(?:[|:/][\d]{2}|xx|xxx|xxxx]+(?:[|:/][\d]{2,4}|xx|xxx|xxxx]+(?:[|:/][\d]{3,4}|xxx|xxxx|rnd]+)?)?)?'
+    matches = re.findall(digits_x_pattern, user_input, re.IGNORECASE)
+    if matches:
+        for match in matches:
+            parts = re.split(r'[|:/]', match)
+            bin_part = ''.join(filter(lambda x: x.isdigit() or x in 'xX', parts[0]))
+            digits_only = re.sub(r'[^0-9]', '', bin_part)
+            if 6 <= len(digits_only) <= 16:
+                if len(parts) > 1:
+                    full_match = bin_part + '|' + '|'.join(parts[1:])
+                    bin = full_match
+                else:
+                    bin = digits_only
+                break
     if not bin:
         return None, None, None, None, None
-    bin = bin.strip()
-    match = re.match(
-        r'^(\d*[xX]*\d*)(?:[|:/](xx|\d{2}|xxx))?(?:[|:/](xx|\d{2,4}|xxxx))?(?:[|:/](xxx|\d{3,4}|xxxx))?$',
-        bin, re.IGNORECASE
-    )
-    if match:
-        parsed_bin, parsed_month, parsed_year, parsed_cvv = match.groups()[:4]
-        if parsed_bin:
-            clean_bin = re.sub(r'[^0-9xX]', '', parsed_bin)
-            bin_length = len(re.sub(r'[^0-9]', '', clean_bin))
-            if bin_length < 6 or bin_length > 15:
-                return None, None, None, None, None
-            parsed_bin = clean_bin
-    if not parsed_bin:
-        clean_bin = re.sub(r'[^0-9xX]', '', bin)
-        bin_length = len(re.sub(r'[^0-9]', '', clean_bin))
-        if 6 <= bin_length <= 15:
-            parsed_bin = clean_bin
+    parts = re.split(r'[|:/]', bin)
+    bin_part = parts[0] if parts else ""
+    digits_only = re.sub(r'[^0-9xX]', '', bin_part)
+    if digits_only:
+        if 6 <= len(re.sub(r'[^0-9]', '', digits_only)) <= 16:
+            bin = digits_only
         else:
             return None, None, None, None, None
-    if month and month.lower() in ['xx', 'xxx']:
-        parsed_month = None
-    elif month and month.isdigit() and len(month) == 2:
-        month_val = int(month)
-        if 1 <= month_val <= 12:
-            parsed_month = f"{month_val:02d}"
-    elif parsed_month and parsed_month.lower() in ['xx', 'xxx']:
-        parsed_month = None
-    elif parsed_month and parsed_month.isdigit() and len(parsed_month) == 2:
-        month_val = int(parsed_month)
-        if 1 <= month_val <= 12:
-            parsed_month = f"{month_val:02d}"
-        else:
-            return None, None, None, None, None
-    if year and year.lower() in ['xx', 'xxxx']:
-        parsed_year = None
-    elif year and year.isdigit():
-        if len(year) == 2:
-            year_int = int(year)
-            if year_int >= 25:
-                parsed_year = f"20{year}"
-            else:
-                return None, None, None, None, None
-        elif len(year) == 4:
-            year_int = int(year)
-            if 2025 <= year_int <= 2099:
-                parsed_year = year
-            else:
-                return None, None, None, None, None
-    elif parsed_year and parsed_year.lower() in ['xx', 'xxxx']:
-        parsed_year = None
-    elif parsed_year and parsed_year.isdigit():
-        if len(parsed_year) == 2:
-            year_int = int(parsed_year)
-            if year_int >= 25:
-                parsed_year = f"20{parsed_year}"
-            else:
-                return None, None, None, None, None
-        elif len(parsed_year) == 4:
-            year_int = int(parsed_year)
-            if 2025 <= year_int <= 2099:
-                parsed_year = parsed_year
-            else:
-                return None, None, None, None, None
-    if cvv and cvv.lower() in ['xxx', 'xxxx']:
-        parsed_cvv = None
-    elif cvv and cvv.isdigit() and len(cvv) in [3, 4]:
-        parsed_cvv = cvv
-    elif parsed_cvv and parsed_cvv.lower() in ['xxx', 'xxxx']:
-        parsed_cvv = None
-    elif parsed_cvv and parsed_cvv.isdigit() and len(parsed_cvv) in [3, 4]:
-        parsed_cvv = parsed_cvv
-    return parsed_bin, parsed_month, parsed_year, parsed_cvv, parsed_amount
-
+    else:
+        return None, None, None, None, None
+    if len(parts) > 1:
+        if parts[1].lower() == 'xx':
+            month = None
+        elif parts[1].isdigit() and len(parts[1]) == 2:
+            month_val = int(parts[1])
+            if 1 <= month_val <= 12:
+                month = f"{month_val:02d}"
+    if len(parts) > 2:
+        if parts[2].lower() in ['xx', 'xxxx']:
+            year = None
+        elif parts[2].isdigit():
+            year_str = parts[2]
+            if len(year_str) == 2:
+                year_int = int(year_str)
+                if year_int >= 25:
+                    year = f"20{year_str}"
+            elif len(year_str) == 4:
+                year_int = int(year_str)
+                if 2025 <= year_int <= 2099:
+                    year = year_str
+    if len(parts) > 3 and parts[3]:
+        if parts[3].lower() in ['xxx', 'xxxx', 'rnd']:
+            cvv = None
+        elif parts[3].isdigit():
+            cvv = parts[3]
+    return bin, month, year, cvv, amount
 @app.route('/', methods=['GET'])
 def status():
     return render_template('status.html')
-
 @app.route('/gen', methods=['GET'])
 def generate_cards():
+    CC_GEN_LIMIT = 2000
     bin = request.args.get('bin')
     month = request.args.get('month')
     year = request.args.get('year')
     cvv = request.args.get('cvv')
     amount = request.args.get('amount', default=10, type=int)
-    CC_GEN_LIMIT = 2000
     if not bin:
         return jsonify({
             "status": "error",
@@ -237,7 +214,14 @@ def generate_cards():
             "api_owner": "@ISmartCoder",
             "api_updates": "t.me/TheSmartDev"
         }), 400
-    bin, month, year, cvv, amount = parse_input(bin, month, year, cvv, amount)
+    user_input = bin
+    if month:
+        user_input += f"|{month}"
+    if year:
+        user_input += f"|{year}"
+    if cvv:
+        user_input += f"|{cvv}"
+    bin, month, year, cvv, amount = parse_input(user_input)
     if not bin:
         return jsonify({
             "status": "error",
@@ -248,7 +232,7 @@ def generate_cards():
     if amount > CC_GEN_LIMIT:
         return jsonify({
             "status": "error",
-            "message": "Limit exceeded",
+            "message": f"Limit exceeded: Maximum {CC_GEN_LIMIT} cards allowed",
             "api_owner": "@ISmartCoder",
             "api_updates": "t.me/TheSmartDev"
         }), 400
@@ -261,7 +245,14 @@ def generate_cards():
                 "api_owner": "@ISmartCoder",
                 "api_updates": "t.me/TheSmartDev"
             }), 400
-    cards = generate_custom_cards(bin, amount, month, year, cvv) if 'x' in bin.lower() else generate_credit_card(bin, amount, month, year, cvv)
+        elif not is_amex and len(cvv) != 3:
+            return jsonify({
+                "status": "error",
+                "message": "Invalid CVV format: CVV must be 3 digits for non-AMEX",
+                "api_owner": "@ISmartCoder",
+                "api_updates": "t.me/TheSmartDev"
+            }), 400
+    cards = generate_credit_card(bin, amount, month, year, cvv)
     bin_info = get_bin_info(bin)
     return jsonify({
         "status": "success",
@@ -274,6 +265,5 @@ def generate_cards():
         "api_owner": "@ISmartCoder",
         "api_updates": "t.me/TheSmartDev"
     }), 200
-
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
