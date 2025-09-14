@@ -191,7 +191,7 @@ def parse_input(user_input, amount=10):
                     year = f"20{year_str}"
             elif len(year_str) == 4:
                 year_int = int(year_str)
-                if 2025 <= year_int <= 2099:
+                if 2027 <= year_int <= 2035:
                     year = year_str
     if len(parts) > 3 and parts[3]:
         if parts[3].lower() in ['xxx', 'xxxx', 'rnd']:
