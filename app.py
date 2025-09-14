@@ -63,7 +63,7 @@ def generate_credit_card(bin, amount, month=None, year=None, cvv=None):
         if not luhn_algorithm(card_number):
             continue
         card_month = month if month is not None else f"{random.randint(1, 12):02d}"
-        card_year = year if year is not None else str(random.randint(2025, 2035))
+        card_year = year if year is not None else str(random.randint(2027, 2035))
         card_cvv = cvv if cvv is not None else ''.join([str(random.randint(0, 9)) for _ in range(cvv_length)])
         formatted_card = f"{card_number}|{card_month}|{card_year}|{card_cvv}"
         cards.append(formatted_card)
@@ -89,7 +89,7 @@ def generate_custom_cards(bin, amount, month=None, year=None, cvv=None):
         if not luhn_algorithm(card_number):
             continue
         card_month = month if month is not None else f"{random.randint(1, 12):02d}"
-        card_year = year if year is not None else str(random.randint(2025, 2035))
+        card_year = year if year is not None else str(random.randint(2027, 2035))
         card_cvv = cvv if cvv is not None else ''.join([str(random.randint(0, 9)) for _ in range(cvv_length)])
         formatted_card = f"{card_number}|{card_month}|{card_year}|{card_cvv}"
         cards.append(formatted_card)
@@ -187,12 +187,16 @@ def parse_input(user_input, amount=10):
             year_str = parts[2]
             if len(year_str) == 2:
                 year_int = int(year_str)
-                if year_int >= 25:
+                if year_int >= 27:
                     year = f"20{year_str}"
+                else:
+                    year = None
             elif len(year_str) == 4:
                 year_int = int(year_str)
                 if 2027 <= year_int <= 2035:
                     year = year_str
+                else:
+                    year = None
     if len(parts) > 3 and parts[3]:
         if parts[3].lower() in ['xxx', 'xxxx', 'rnd']:
             cvv = None
